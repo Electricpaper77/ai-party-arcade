@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { trackAnalyticsEvent } from "@/lib/analytics";
 import { clearLeaderboard, readLeaderboard, type LeaderboardEntry } from "@/lib/storage";
 
 const sampleScores: LeaderboardEntry[] = [
@@ -32,6 +33,8 @@ export function LeaderboardClient() {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    trackAnalyticsEvent("leaderboard_view");
+
     function sync() {
       setEntries(readLeaderboard().sort((a, b) => b.score - a.score));
       setHydrated(true);

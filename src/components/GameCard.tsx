@@ -15,12 +15,20 @@ export function GameCard({ game }: { game: Game }) {
         <p className="mt-3 text-sm leading-6 text-white/62">{game.description}</p>
         <dl className="mt-5 grid gap-3 text-sm sm:grid-cols-2">
           <div className="border border-white/10 bg-white/[0.03] p-3">
+            <dt className="text-xs font-black uppercase tracking-[0.16em] text-[#3cff87]">AI status</dt>
+            <dd className="mt-1 font-bold text-white">{game.aiStatus}</dd>
+          </div>
+          <div className="border border-white/10 bg-white/[0.03] p-3">
             <dt className="text-xs font-black uppercase tracking-[0.16em] text-[#47f7ff]">Difficulty</dt>
             <dd className="mt-1 font-bold text-white">{game.difficulty}</dd>
           </div>
           <div className="border border-white/10 bg-white/[0.03] p-3">
             <dt className="text-xs font-black uppercase tracking-[0.16em] text-[#ff8a3d]">Player mode</dt>
             <dd className="mt-1 font-bold text-white">{game.playerMode}</dd>
+          </div>
+          <div className="border border-white/10 bg-white/[0.03] p-3">
+            <dt className="text-xs font-black uppercase tracking-[0.16em] text-[#faff00]">Best use</dt>
+            <dd className="mt-1 font-bold text-white">{game.bestUseCase}</dd>
           </div>
         </dl>
       </div>

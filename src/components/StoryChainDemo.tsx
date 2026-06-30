@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { fallbackStoryContinuation, type AiResponse, type StoryContinuation } from "@/lib/aiSchemas";
+import { trackAnalyticsEvent } from "@/lib/analytics";
 import { addLeaderboardEntry } from "@/lib/storage";
 import { AiMetricsPanel, emptyAiMetrics, mergeAiMetrics, type AiMetrics } from "./AiMetricsPanel";
 import { GameDemoFrame } from "./GameDemoFrame";
@@ -48,7 +49,13 @@ export function StoryChainDemo({ compact = false }: { compact?: boolean }) {
       setLines((current) => [...current, payload.data.next_line]);
       setMetrics((current) => mergeAiMetrics(current, payload.meta));
       setSaved(false);
+      trackAnalyticsEvent("story_continued", {
+        source: payload.meta.source,
+        fallback_used: payload.meta.fallback_used,
+        latency_ms: payload.meta.latency_ms,
+      });
       if (payload.meta.error_type) {
+        trackAnalyticsEvent("fallback_used", { game: "ai-story-chain", error_type: payload.meta.error_type });
         setError(`Using demo fallback: ${payload.meta.error_type}`);
       }
     } catch {
@@ -61,6 +68,7 @@ export function StoryChainDemo({ compact = false }: { compact?: boolean }) {
         errorCount: current.errorCount + 1,
       }));
       setSaved(false);
+      trackAnalyticsEvent("fallback_used", { game: "ai-story-chain", error_type: "client_fetch_error" });
       setError("AI story continuation failed. Using demo fallback.");
     } finally {
       setLoading(false);

@@ -25,7 +25,7 @@ export default function SafetyPage() {
       <PageHeader
         eyebrow="Safety"
         title="Keep games light, clear, and appropriate."
-        description="This page sets expectations for a public MVP before realtime multiplayer or live model-generated content is added."
+        description="This page sets expectations for a public MVP with server-side AI generation, labeled fallback content, and local-only room sharing."
       />
       <section className="mx-auto max-w-4xl px-4 pb-20 sm:px-6 lg:px-8">
         <div className="space-y-4 border border-white/14 bg-[#11111b]/92 p-5 sm:p-6">

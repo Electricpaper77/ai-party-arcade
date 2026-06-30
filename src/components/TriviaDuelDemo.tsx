@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { fallbackTriviaRound, type AiResponse, type TriviaRound } from "@/lib/aiSchemas";
+import { trackAnalyticsEvent } from "@/lib/analytics";
 import { addLeaderboardEntry } from "@/lib/storage";
 import { AiMetricsPanel, emptyAiMetrics, mergeAiMetrics, type AiMetrics } from "./AiMetricsPanel";
 import { GameDemoFrame } from "./GameDemoFrame";
@@ -32,7 +33,13 @@ export function TriviaDuelDemo({ compact = false }: { compact?: boolean }) {
       setRound(payload.data);
       setRoundSource(payload.meta.source === "ai-generated" ? "AI-generated" : "demo fallback");
       setMetrics((current) => mergeAiMetrics(current, payload.meta));
+      trackAnalyticsEvent("trivia_generated", {
+        source: payload.meta.source,
+        fallback_used: payload.meta.fallback_used,
+        latency_ms: payload.meta.latency_ms,
+      });
       if (payload.meta.error_type) {
+        trackAnalyticsEvent("fallback_used", { game: "ai-trivia-duel", error_type: payload.meta.error_type });
         setError(`Using demo fallback: ${payload.meta.error_type}`);
       }
     } catch {
@@ -43,6 +50,7 @@ export function TriviaDuelDemo({ compact = false }: { compact?: boolean }) {
         fallbackCount: current.fallbackCount + 1,
         errorCount: current.errorCount + 1,
       }));
+      trackAnalyticsEvent("fallback_used", { game: "ai-trivia-duel", error_type: "client_fetch_error" });
       setError("AI trivia generation failed. Using demo fallback.");
     } finally {
       setLoading(false);

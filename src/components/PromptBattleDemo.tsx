@@ -8,6 +8,7 @@ import {
   type JudgeResult,
   type PromptRound,
 } from "@/lib/aiSchemas";
+import { trackAnalyticsEvent } from "@/lib/analytics";
 import { addLeaderboardEntry } from "@/lib/storage";
 import { AiMetricsPanel, emptyAiMetrics, mergeAiMetrics, type AiMetrics } from "./AiMetricsPanel";
 import { GameDemoFrame } from "./GameDemoFrame";
@@ -42,7 +43,13 @@ export function PromptBattleDemo({ compact = false }: { compact?: boolean }) {
       setMetrics((current) => mergeAiMetrics(current, payload.meta));
       setJudgeResult(null);
       setLastScore(null);
+      trackAnalyticsEvent("prompt_generated", {
+        source: payload.meta.source,
+        fallback_used: payload.meta.fallback_used,
+        latency_ms: payload.meta.latency_ms,
+      });
       if (payload.meta.error_type) {
+        trackAnalyticsEvent("fallback_used", { game: "prompt-battle", error_type: payload.meta.error_type });
         setError(`Using demo fallback: ${payload.meta.error_type}`);
       }
     } catch {
@@ -53,6 +60,7 @@ export function PromptBattleDemo({ compact = false }: { compact?: boolean }) {
         fallbackCount: current.fallbackCount + 1,
         errorCount: current.errorCount + 1,
       }));
+      trackAnalyticsEvent("fallback_used", { game: "prompt-battle", error_type: "client_fetch_error" });
       setError("AI prompt generation failed. Using demo fallback.");
     } finally {
       setLoadingPrompt(false);
@@ -76,6 +84,7 @@ export function PromptBattleDemo({ compact = false }: { compact?: boolean }) {
       setJudgeResult(result);
       setMetrics((current) => mergeAiMetrics(current, payload.meta));
       if (payload.meta.error_type) {
+        trackAnalyticsEvent("fallback_used", { game: "prompt-battle-judge", error_type: payload.meta.error_type });
         setError(`Using demo fallback judge: ${payload.meta.error_type}`);
       }
     } catch {
@@ -86,6 +95,7 @@ export function PromptBattleDemo({ compact = false }: { compact?: boolean }) {
         fallbackCount: current.fallbackCount + 1,
         errorCount: current.errorCount + 1,
       }));
+      trackAnalyticsEvent("fallback_used", { game: "prompt-battle-judge", error_type: "client_fetch_error" });
       setError("AI judging failed. Using demo fallback judge.");
     } finally {
       setJudging(false);

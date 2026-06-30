@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { trackAnalyticsEvent } from "@/lib/analytics";
 import { copyTextToClipboard } from "@/lib/clipboard";
 import { games, type GameSlug } from "@/lib/games";
 import { generateRoomCode, saveRoom } from "@/lib/storage";
@@ -19,6 +20,7 @@ export function CreateRoomClient() {
   async function copyInvite() {
     const url = typeof window === "undefined" ? invitePath : `${window.location.origin}${invitePath}`;
     const copied = await copyTextToClipboard(url);
+    trackAnalyticsEvent("copy_invite_link", { copied, location: "create_room", game: selectedGame });
     if (copied) {
       setCopyState("Copied");
       window.setTimeout(() => setCopyState("Copy invite link"), 1400);
@@ -30,6 +32,7 @@ export function CreateRoomClient() {
   }
 
   function createRoom() {
+    trackAnalyticsEvent("create_room_click", { game: selectedGame, source: "create_room_form" });
     saveRoom({
       code,
       host: host.trim() || "Host",

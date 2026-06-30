@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { trackAnalyticsEvent } from "@/lib/analytics";
 import { copyTextToClipboard } from "@/lib/clipboard";
 import { games, type GameSlug } from "@/lib/games";
 import { readRoom, saveRoom, type DemoRoom } from "@/lib/storage";
@@ -63,6 +64,7 @@ export function RoomClient({ code }: { code: string }) {
     }
 
     const copied = await copyTextToClipboard(inviteUrl);
+    trackAnalyticsEvent("copy_invite_link", { copied, location: "room", game: selectedGame });
     if (copied) {
       setCopyState("Copied");
       window.setTimeout(() => setCopyState("Copy invite link"), 1400);
