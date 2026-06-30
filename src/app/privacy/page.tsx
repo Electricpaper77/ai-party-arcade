@@ -12,10 +12,10 @@ export const metadata: Metadata = {
 
 const privacyNotes = [
   "AI Party Arcade does not require login, payment, or an account in this MVP.",
-  "Room setup, story lines, demo scores, and leaderboard entries are stored in your browser localStorage.",
+  "Room setup, daily streaks, story lines, demo scores, and leaderboard entries are stored in your browser localStorage.",
   "LocalStorage data is not a secure vault. Do not enter sensitive personal data, confidential information, passwords, or financial details.",
   "AI generation is requested through server-side API routes when AI_API_KEY is configured. The browser never receives the API key.",
-  "The MVP does not add Supabase, analytics, ads, login, payments, or synchronized multiplayer storage.",
+  "The MVP includes analytics-ready browser events, but does not send analytics to a third-party service, add Supabase, ads, login, payments, or synchronized multiplayer storage.",
   "Clearing your browser data or using the reset leaderboard button can remove local demo scores.",
   "If backend services are added later, this privacy page should be updated before public launch.",
 ];

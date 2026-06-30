@@ -15,9 +15,39 @@ export type DemoRoom = {
   createdAt: string;
 };
 
+export type DailyChallengeKind = "prompt-battle" | "ai-trivia-duel";
+
+export type DailyChallengeResult = {
+  dateKey: string;
+  game: DailyChallengeKind;
+  score: number;
+  source: "AI-generated" | "demo fallback";
+  completedAt: string;
+  shareText: string;
+  streak: number;
+};
+
+export type DailyChallengeStats = {
+  currentStreak: number;
+  bestStreak: number;
+  totalCompleted: number;
+  shareClicks: number;
+  lastCompletedDate?: string;
+  results: Record<string, DailyChallengeResult>;
+};
+
 const leaderboardKey = "ai-party-arcade:leaderboard";
 const roomsKey = "ai-party-arcade:rooms";
+const dailyChallengeKey = "ai-party-arcade:daily-challenge";
 const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+const emptyDailyStats: DailyChallengeStats = {
+  currentStreak: 0,
+  bestStreak: 0,
+  totalCompleted: 0,
+  shareClicks: 0,
+  results: {},
+};
 
 export function generateRoomCode() {
   return Array.from({ length: 6 }, () => alphabet[Math.floor(Math.random() * alphabet.length)]).join("");
@@ -76,3 +106,84 @@ export function readRoom(code: string) {
   return readRooms()[code.toUpperCase()];
 }
 
+function daysBetween(previousDate: string, nextDate: string) {
+  const previous = new Date(`${previousDate}T00:00:00.000Z`).getTime();
+  const next = new Date(`${nextDate}T00:00:00.000Z`).getTime();
+
+  if (!Number.isFinite(previous) || !Number.isFinite(next)) {
+    return Number.POSITIVE_INFINITY;
+  }
+
+  return Math.round((next - previous) / 86_400_000);
+}
+
+export function readDailyChallengeStats(): DailyChallengeStats {
+  if (typeof window === "undefined") {
+    return emptyDailyStats;
+  }
+
+  try {
+    const raw = window.localStorage.getItem(dailyChallengeKey);
+    if (!raw) {
+      return emptyDailyStats;
+    }
+
+    const parsed = JSON.parse(raw) as DailyChallengeStats;
+    return {
+      currentStreak: Number(parsed.currentStreak) || 0,
+      bestStreak: Number(parsed.bestStreak) || 0,
+      totalCompleted: Number(parsed.totalCompleted) || 0,
+      shareClicks: Number(parsed.shareClicks) || 0,
+      lastCompletedDate: parsed.lastCompletedDate,
+      results: parsed.results && typeof parsed.results === "object" ? parsed.results : {},
+    };
+  } catch {
+    return emptyDailyStats;
+  }
+}
+
+export function readDailyChallengeResult(dateKey: string) {
+  return readDailyChallengeStats().results[dateKey];
+}
+
+function writeDailyChallengeStats(stats: DailyChallengeStats) {
+  window.localStorage.setItem(dailyChallengeKey, JSON.stringify(stats));
+  window.dispatchEvent(new Event("ai-party-arcade:daily-challenge"));
+}
+
+export function saveDailyChallengeResult(result: Omit<DailyChallengeResult, "streak">) {
+  const stats = readDailyChallengeStats();
+  const alreadyCompleted = Boolean(stats.results[result.dateKey]);
+  const gap = stats.lastCompletedDate ? daysBetween(stats.lastCompletedDate, result.dateKey) : Number.POSITIVE_INFINITY;
+  const currentStreak = alreadyCompleted ? stats.currentStreak : gap === 1 ? stats.currentStreak + 1 : 1;
+  const nextResult: DailyChallengeResult = {
+    ...result,
+    streak: currentStreak,
+  };
+  const nextResults = {
+    ...stats.results,
+    [result.dateKey]: nextResult,
+  };
+  const nextStats: DailyChallengeStats = {
+    ...stats,
+    currentStreak,
+    bestStreak: Math.max(stats.bestStreak, currentStreak),
+    totalCompleted: Object.keys(nextResults).length,
+    lastCompletedDate: alreadyCompleted ? stats.lastCompletedDate : result.dateKey,
+    results: nextResults,
+  };
+
+  writeDailyChallengeStats(nextStats);
+  return { result: nextResult, stats: nextStats, streakChanged: !alreadyCompleted && currentStreak !== stats.currentStreak };
+}
+
+export function incrementDailyShareClicks() {
+  const stats = readDailyChallengeStats();
+  const nextStats = {
+    ...stats,
+    shareClicks: stats.shareClicks + 1,
+  };
+
+  writeDailyChallengeStats(nextStats);
+  return nextStats;
+}

@@ -4,6 +4,7 @@ const baseUrl = "https://ai-party-arcade.vercel.app";
 
 const routes = [
   "/",
+  "/daily",
   "/games",
   "/games/prompt-battle",
   "/games/ai-trivia-duel",
@@ -25,4 +26,3 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: route === "/" ? 1 : 0.7,
   }));
 }
-

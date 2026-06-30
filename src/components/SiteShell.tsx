@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 const navItems = [
+  { href: "/daily", label: "Daily" },
   { href: "/games", label: "Games" },
   { href: "/create-room", label: "Create Room" },
   { href: "/leaderboard", label: "Leaderboard" },
@@ -34,17 +35,17 @@ export function SiteShell({ children }: { children: ReactNode }) {
             ))}
           </nav>
           <Link
-            href="/create-room"
+            href="/daily"
             className="inline-flex min-h-11 items-center rounded bg-[#47f7ff] px-4 py-3 text-sm font-black text-[#071014] shadow-[4px_4px_0_#ff3df2] transition hover:-translate-y-0.5"
           >
-            New Room
+            Daily
           </Link>
         </div>
       </header>
       <main>{children}</main>
       <footer className="border-t border-white/10 px-4 py-8 text-sm text-white/58">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <p>AI Party Arcade is an MVP demo. Room and leaderboard data are stored only in this browser.</p>
+          <p>AI Party Arcade is an MVP demo. Room, daily streak, and leaderboard data are stored only in this browser.</p>
           <nav className="flex flex-wrap gap-4">
             <Link href="/terms" className="inline-flex min-h-11 items-center px-2 hover:text-white">
               Terms

@@ -21,6 +21,7 @@ const builtWith = [
 const productionProof = [
   { label: "Live Vercel deployment", href: "https://ai-party-arcade.vercel.app/" },
   { label: "GitHub repo", href: "https://github.com/Electricpaper77/ai-party-arcade" },
+  { label: "Daily challenge UX", href: "/daily" },
   { label: "Server-side AI routes", href: "/games/prompt-battle" },
   { label: "Structured outputs", href: "/games/ai-trivia-duel" },
   { label: "Fallback-safe generation", href: "/games/story-chain" },
@@ -44,9 +45,16 @@ export default function Home() {
               Play AI-generated party games like Prompt Battle, Trivia Duel, and Story Chain directly in your browser. Share a room link, start a round, and compare scores.
             </p>
             <p className="mt-4 max-w-2xl border-l-4 border-[#faff00] bg-[#faff00]/10 p-4 text-sm font-bold leading-6 text-[#fffca8]">
-              AI-generated rounds live • Room sharing is local-demo until realtime multiplayer is added.
+              AI-generated rounds live - Room sharing is local-demo until realtime multiplayer is added.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/daily"
+                data-analytics-event="daily_challenge_started"
+                className="rounded bg-[#47f7ff] px-6 py-4 text-center text-sm font-black uppercase tracking-[0.14em] text-[#071014] shadow-[5px_5px_0_#3cff87] transition hover:-translate-y-0.5"
+              >
+                Play Daily Challenge
+              </Link>
               <Link
                 href="/create-room"
                 data-analytics-event="create_room_click"

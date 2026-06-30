@@ -5,7 +5,12 @@ export type AnalyticsEventName =
   | "trivia_generated"
   | "story_continued"
   | "leaderboard_view"
-  | "fallback_used";
+  | "fallback_used"
+  | "daily_challenge_view"
+  | "daily_challenge_started"
+  | "daily_challenge_completed"
+  | "share_score_clicked"
+  | "streak_updated";
 
 export type AnalyticsEventPayload = Record<string, string | number | boolean | undefined>;
 
