@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { copyTextToClipboard } from "@/lib/clipboard";
 import { games, type GameSlug } from "@/lib/games";
 import { generateRoomCode, saveRoom } from "@/lib/storage";
 
@@ -10,8 +11,23 @@ export function CreateRoomClient() {
   const [host, setHost] = useState("Host");
   const [selectedGame, setSelectedGame] = useState<GameSlug>("prompt-battle");
   const [code, setCode] = useState(() => generateRoomCode());
+  const [copyState, setCopyState] = useState("Copy invite link");
 
-  const playableGames = useMemo(() => games.filter((game) => game.status === "Playable MVP demo"), []);
+  const playableGames = useMemo(() => games.filter((game) => game.status === "MVP demo"), []);
+  const invitePath = `/room/${code}`;
+
+  async function copyInvite() {
+    const url = typeof window === "undefined" ? invitePath : `${window.location.origin}${invitePath}`;
+    const copied = await copyTextToClipboard(url);
+    if (copied) {
+      setCopyState("Copied");
+      window.setTimeout(() => setCopyState("Copy invite link"), 1400);
+      return;
+    }
+
+    setCopyState("Link ready");
+    window.setTimeout(() => setCopyState("Copy invite link"), 1400);
+  }
 
   function createRoom() {
     saveRoom({
@@ -67,6 +83,18 @@ export function CreateRoomClient() {
                 Reroll
               </button>
             </div>
+            <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <span className="select-all break-all border border-white/10 bg-black/32 px-3 py-3 text-sm font-bold text-white/62">
+                Invite preview: {invitePath}
+              </span>
+              <button
+                type="button"
+                onClick={copyInvite}
+                className="rounded border border-white/24 px-4 py-3 text-sm font-black text-white hover:bg-white/10"
+              >
+                {copyState}
+              </button>
+            </div>
           </div>
           <button
             type="button"
@@ -75,6 +103,9 @@ export function CreateRoomClient() {
           >
             Create demo room
           </button>
+          <p className="text-xs font-bold leading-5 text-white/52">
+            MVP demo note: invite links open the same local room route, but gameplay is not synchronized between devices yet.
+          </p>
         </div>
       </div>
       <div className="grid gap-4">
@@ -98,4 +129,3 @@ export function CreateRoomClient() {
     </section>
   );
 }
-

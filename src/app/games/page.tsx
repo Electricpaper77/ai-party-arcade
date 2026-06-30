@@ -9,7 +9,7 @@ export default function GamesPage() {
       <PageHeader
         eyebrow="Game shelf"
         title="Pick an instant party format."
-        description="Three games are playable as MVP demos. Mystery Room and Reaction Duel are visible as preview cards without pretending to be live production modes."
+        description="Prompt Battle, AI Trivia Duel, and AI Story Chain are playable as local MVP demos. Mystery Room and Reaction Duel are marked as coming soon."
       />
       <section className="mx-auto grid max-w-7xl gap-5 px-4 pb-20 sm:px-6 md:grid-cols-2 lg:grid-cols-3 lg:px-8">
         {games.map((game) => (
@@ -19,4 +19,3 @@ export default function GamesPage() {
     </SiteShell>
   );
 }
-

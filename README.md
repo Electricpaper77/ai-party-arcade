@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Party Arcade
 
-## Getting Started
+AI Party Arcade is a browser-based MVP for quick AI-style party games. The core loop is simple: create a room, invite friends, play a generated-style challenge, and compare scores.
 
-First, run the development server:
+This public MVP is intentionally local-only. It does not include real AI APIs, realtime multiplayer, Supabase, login, payments, ads, or global leaderboards yet.
+
+## Features
+
+- Modern arcade-style homepage with a 60-second reviewer demo path
+- Games page with Prompt Battle, AI Trivia Duel, AI Story Chain, Mystery Room, and Reaction Duel
+- Local MVP demos for Prompt Battle, AI Trivia Duel, and AI Story Chain
+- Random six-character room codes
+- Copyable invite links
+- Local browser room state and localStorage leaderboard
+- Sample leaderboard rows when no local scores exist
+- Terms, Privacy, and Safety pages
+- App Router sitemap and robots files for Vercel deployment
+
+## Tech Stack
+
+- Next.js App Router
+- React
+- TypeScript
+- Tailwind CSS
+- Browser localStorage for demo-only persistence
+
+## Local Setup
+
+```bash
+npm install
+npm run dev
+```
+
+Open http://localhost:3000.
+
+## Scripts
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run lint
+npm run build
+npm run start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Build Command
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Vercel Deployment
 
-## Learn More
+1. Push this repository to GitHub, GitLab, or Bitbucket.
+2. In Vercel, choose Add New Project.
+3. Import the repository.
+4. Use the default Next.js framework settings:
+   - Install Command: `npm install`
+   - Build Command: `npm run build`
+   - Output Directory: leave default
+5. Do not add environment variables for the current MVP.
+6. Deploy.
+7. After deploy, smoke-check `/`, `/games`, `/create-room`, `/leaderboard`, `/terms`, `/privacy`, and `/safety`.
 
-To learn more about Next.js, take a look at the following resources:
+## Environment Variables
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+No environment variables are required for the MVP. See `.env.example` for the current placeholder.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## MVP Limitations
 
-## Deploy on Vercel
+- Gameplay is local/demo-only and not synchronized between devices.
+- Invite links share a room route, but do not create realtime multiplayer sessions.
+- Scores are stored only in the current browser.
+- AI behavior is represented with sample prompts, sample trivia, and placeholder scoring.
+- Mystery Room and Reaction Duel are marked as coming soon.
+- No real-money gambling, payments, adult-content focus, or ad features are included.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Next Roadmap
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Realtime room synchronization
+- Real AI-generated prompts, trivia, and story continuations
+- Moderation and stronger safety controls
+- Optional accounts or host controls
+- Persistent leaderboards
+- Expanded game library
+

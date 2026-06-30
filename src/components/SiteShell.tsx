@@ -35,17 +35,29 @@ export function SiteShell({ children }: { children: ReactNode }) {
           </nav>
           <Link
             href="/create-room"
-            className="rounded bg-[#47f7ff] px-4 py-2 text-sm font-black text-[#071014] shadow-[4px_4px_0_#ff3df2] transition hover:-translate-y-0.5"
+            className="inline-flex min-h-11 items-center rounded bg-[#47f7ff] px-4 py-3 text-sm font-black text-[#071014] shadow-[4px_4px_0_#ff3df2] transition hover:-translate-y-0.5"
           >
             New Room
           </Link>
         </div>
       </header>
       <main>{children}</main>
-      <footer className="border-t border-white/10 px-4 py-8 text-center text-sm text-white/58">
-        AI Party Arcade is an MVP demo. Room and leaderboard data are stored only in this browser.
+      <footer className="border-t border-white/10 px-4 py-8 text-sm text-white/58">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <p>AI Party Arcade is an MVP demo. Room and leaderboard data are stored only in this browser.</p>
+          <nav className="flex flex-wrap gap-4">
+            <Link href="/terms" className="inline-flex min-h-11 items-center px-2 hover:text-white">
+              Terms
+            </Link>
+            <Link href="/privacy" className="inline-flex min-h-11 items-center px-2 hover:text-white">
+              Privacy
+            </Link>
+            <Link href="/safety" className="inline-flex min-h-11 items-center px-2 hover:text-white">
+              Safety
+            </Link>
+          </nav>
+        </div>
       </footer>
     </div>
   );
 }
-

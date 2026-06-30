@@ -9,7 +9,9 @@ export type Game = {
   slug: GameSlug;
   title: string;
   href: string;
-  status: "Playable MVP demo" | "MVP demo preview";
+  status: "MVP demo" | "Demo mode" | "Coming soon";
+  difficulty: "Easy" | "Medium" | "Fast";
+  playerMode: string;
   tagline: string;
   description: string;
   accent: string;
@@ -19,8 +21,10 @@ export const games: Game[] = [
   {
     slug: "prompt-battle",
     title: "Prompt Battle",
-    href: "/prompt-battle",
-    status: "Playable MVP demo",
+    href: "/games/prompt-battle",
+    status: "MVP demo",
+    difficulty: "Easy",
+    playerMode: "Local solo demo / party prompt format",
     tagline: "Write the sharpest prompt before the timer burns out.",
     description:
       "Players respond to a shared prompt. This demo uses placeholder scoring and saves local scores only.",
@@ -29,8 +33,10 @@ export const games: Game[] = [
   {
     slug: "ai-trivia-duel",
     title: "AI Trivia Duel",
-    href: "/ai-trivia-duel",
-    status: "Playable MVP demo",
+    href: "/games/ai-trivia-duel",
+    status: "MVP demo",
+    difficulty: "Easy",
+    playerMode: "Local solo demo / duel format",
     tagline: "Fast answers, weird categories, instant rematches.",
     description:
       "Answer sample AI-themed questions in a local browser round. No backend or live opponents are simulated.",
@@ -39,8 +45,10 @@ export const games: Game[] = [
   {
     slug: "ai-story-chain",
     title: "AI Story Chain",
-    href: "/ai-story-chain",
-    status: "Playable MVP demo",
+    href: "/games/story-chain",
+    status: "MVP demo",
+    difficulty: "Medium",
+    playerMode: "Local pass-and-play demo",
     tagline: "Build a chaotic story one line at a time.",
     description:
       "Add lines to a shared local story and save a demo creativity score to this browser.",
@@ -50,17 +58,21 @@ export const games: Game[] = [
     slug: "mystery-room",
     title: "Mystery Room",
     href: "/create-room",
-    status: "MVP demo preview",
+    status: "Coming soon",
+    difficulty: "Medium",
+    playerMode: "Planned room challenge",
     tagline: "A secret ruleset revealed when the room opens.",
     description:
-      "Preview card for a future instant AI game format. Create a room to reserve a local demo slot.",
+      "Preview card for a future instant AI game format. Not playable in this MVP.",
     accent: "from-[#faff00] to-[#ff3d71]",
   },
   {
     slug: "reaction-duel",
     title: "Reaction Duel",
     href: "/create-room",
-    status: "MVP demo preview",
+    status: "Coming soon",
+    difficulty: "Fast",
+    playerMode: "Planned head-to-head mode",
     tagline: "Beat the flash, win the round.",
     description:
       "Preview card for a future browser reaction challenge. No live matchmaking is included.",
@@ -69,4 +81,3 @@ export const games: Game[] = [
 ];
 
 export const featuredGames = games.slice(0, 3);
-

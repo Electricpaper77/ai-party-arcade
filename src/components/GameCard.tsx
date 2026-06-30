@@ -13,14 +13,23 @@ export function GameCard({ game }: { game: Game }) {
         </div>
         <p className="text-base font-bold text-white">{game.tagline}</p>
         <p className="mt-3 text-sm leading-6 text-white/62">{game.description}</p>
+        <dl className="mt-5 grid gap-3 text-sm sm:grid-cols-2">
+          <div className="border border-white/10 bg-white/[0.03] p-3">
+            <dt className="text-xs font-black uppercase tracking-[0.16em] text-[#47f7ff]">Difficulty</dt>
+            <dd className="mt-1 font-bold text-white">{game.difficulty}</dd>
+          </div>
+          <div className="border border-white/10 bg-white/[0.03] p-3">
+            <dt className="text-xs font-black uppercase tracking-[0.16em] text-[#ff8a3d]">Player mode</dt>
+            <dd className="mt-1 font-bold text-white">{game.playerMode}</dd>
+          </div>
+        </dl>
       </div>
       <Link
         href={game.href}
-        className="mt-7 inline-flex w-fit items-center rounded bg-white px-4 py-2 text-sm font-black text-[#111114] transition group-hover:bg-[#faff00]"
+        className="mt-7 inline-flex min-h-11 w-fit items-center rounded bg-white px-4 py-3 text-sm font-black text-[#111114] transition group-hover:bg-[#faff00]"
       >
-        Open game
+        {game.status === "Coming soon" ? "View status" : "Play demo"}
       </Link>
     </article>
   );
 }
-
