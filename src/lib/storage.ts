@@ -22,6 +22,7 @@ export type DailyChallengeResult = {
   game: DailyChallengeKind;
   score: number;
   source: "AI-generated" | "demo fallback";
+  fallbackReason?: string;
   completedAt: string;
   shareText: string;
   streak: number;

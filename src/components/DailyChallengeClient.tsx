@@ -40,6 +40,34 @@ function fallbackPromptScore(answer: string) {
   return Math.min(100, Math.round(36 + new Set(words).size * 4 + Math.min(answer.length, 180) / 7));
 }
 
+function normalizeFallbackReason(errorType?: string) {
+  if (!errorType) {
+    return "";
+  }
+
+  if (errorType === "missing_api_key" || errorType === "invalid_json_shape" || errorType === "rate_limited") {
+    return errorType;
+  }
+
+  if (errorType === "provider_429") {
+    return "rate_limited";
+  }
+
+  if (errorType.startsWith("provider_") || errorType === "json_parse_error") {
+    return "provider_error";
+  }
+
+  return errorType;
+}
+
+function fallbackMessage(reason: string) {
+  if (!reason) {
+    return "";
+  }
+
+  return `Using demo fallback: ${reason}`;
+}
+
 const emptyStats: DailyChallengeStats = {
   currentStreak: 0,
   bestStreak: 0,
@@ -56,6 +84,7 @@ export function DailyChallengeClient() {
   const [loading, setLoading] = useState(false);
   const [completing, setCompleting] = useState(false);
   const [error, setError] = useState("");
+  const [fallbackReason, setFallbackReason] = useState("");
   const [source, setSource] = useState<"AI-generated" | "demo fallback">("demo fallback");
   const [promptRound, setPromptRound] = useState<PromptRound>(fallbackPromptRound);
   const [triviaRound, setTriviaRound] = useState<TriviaRound>(fallbackTriviaRound);
@@ -83,6 +112,7 @@ export function DailyChallengeClient() {
     setStarted(true);
     setLoading(true);
     setError("");
+    setFallbackReason("");
     setSelectedChoice("");
     trackAnalyticsEvent("daily_challenge_started", { date: todayKey, game: challengeKind });
 
@@ -101,27 +131,32 @@ export function DailyChallengeClient() {
       }
 
       if (payload.meta.error_type) {
-        setError(`Using demo fallback: ${payload.meta.error_type}`);
-        trackAnalyticsEvent("fallback_used", { game: challengeKind, error_type: payload.meta.error_type });
+        const reason = normalizeFallbackReason(payload.meta.error_type);
+        setFallbackReason(reason);
+        setError(fallbackMessage(reason));
+        trackAnalyticsEvent("fallback_used", { game: challengeKind, error_type: reason });
       }
     } catch {
+      const reason = "provider_error";
       setSource("demo fallback");
       setPromptRound(fallbackPromptRound);
       setTriviaRound(fallbackTriviaRound);
-      setError("AI generation failed. Using demo fallback.");
-      trackAnalyticsEvent("fallback_used", { game: challengeKind, error_type: "client_fetch_error" });
+      setFallbackReason(reason);
+      setError(fallbackMessage(reason));
+      trackAnalyticsEvent("fallback_used", { game: challengeKind, error_type: reason });
     } finally {
       setLoading(false);
     }
   }
 
-  function saveResult(score: number, resultSource: "AI-generated" | "demo fallback") {
+  function saveResult(score: number, resultSource: "AI-generated" | "demo fallback", reason = fallbackReason) {
     const nextShareText = `I scored ${score} on AI Party Arcade Daily Challenge`;
     const saved = saveDailyChallengeResult({
       dateKey: todayKey,
       game: challengeKind,
       score,
       source: resultSource,
+      fallbackReason: resultSource === "demo fallback" ? reason : undefined,
       completedAt: new Date().toISOString(),
       shareText: nextShareText,
     });
@@ -157,14 +192,18 @@ export function DailyChallengeClient() {
       const score = Math.round(payload.data.score);
       const resultSource = payload.meta.source === "ai-generated" ? source : "demo fallback";
       if (payload.meta.error_type) {
-        setError(`Using demo fallback judge: ${payload.meta.error_type}`);
-        trackAnalyticsEvent("fallback_used", { game: "daily-prompt-judge", error_type: payload.meta.error_type });
+        const reason = normalizeFallbackReason(payload.meta.error_type);
+        setFallbackReason(reason);
+        setError(fallbackMessage(reason));
+        trackAnalyticsEvent("fallback_used", { game: "daily-prompt-judge", error_type: reason });
       }
-      saveResult(score, resultSource);
+      saveResult(score, resultSource, payload.meta.error_type ? normalizeFallbackReason(payload.meta.error_type) : fallbackReason);
     } catch {
-      setError("AI judging failed. Using demo fallback score.");
-      trackAnalyticsEvent("fallback_used", { game: "daily-prompt-judge", error_type: "client_fetch_error" });
-      saveResult(fallbackPromptScore(promptAnswer) || fallbackJudgeResult.score, "demo fallback");
+      const reason = "provider_error";
+      setFallbackReason(reason);
+      setError(fallbackMessage(reason));
+      trackAnalyticsEvent("fallback_used", { game: "daily-prompt-judge", error_type: reason });
+      saveResult(fallbackPromptScore(promptAnswer) || fallbackJudgeResult.score, "demo fallback", reason);
     } finally {
       setCompleting(false);
     }
@@ -210,6 +249,11 @@ export function DailyChallengeClient() {
               <p className="mt-3 text-sm font-bold text-white/62">
                 Streak: {result.streak} day{result.streak === 1 ? "" : "s"} / Source: {result.source}
               </p>
+              {result.fallbackReason ? (
+                <p className="mt-3 border border-[#ff8a3d]/40 bg-[#ff8a3d]/10 p-3 text-sm font-black text-[#ffd0ad]">
+                  Fallback reason: {result.fallbackReason}
+                </p>
+              ) : null}
             </div>
             <button
               type="button"
@@ -233,6 +277,11 @@ export function DailyChallengeClient() {
 
             {loading ? <p className="mt-5 border border-white/14 bg-white/[0.04] p-4 text-sm font-bold text-white/72">Generating today&apos;s round...</p> : null}
             {error ? <p className="mt-5 border border-[#ff8a3d]/40 bg-[#ff8a3d]/10 p-3 text-sm font-bold text-[#ffd0ad]">{error}</p> : null}
+            {!error && source === "AI-generated" ? (
+              <p className="mt-5 border border-[#3cff87]/40 bg-[#3cff87]/10 p-3 text-sm font-bold text-[#a7ffc6]">
+                AI-generated round loaded from the server route.
+              </p>
+            ) : null}
 
             {started && !loading && challengeKind === "prompt-battle" ? (
               <div className="mt-5 grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">

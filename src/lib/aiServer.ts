@@ -155,11 +155,12 @@ export async function generateStructuredAiResponse<T>(request: Request, args: Ge
     });
 
     if (!response.ok) {
+      const errorType = response.status === 429 ? "rate_limited" : "provider_error";
       return loggedFallbackResponse({
         gameType: args.gameType,
         startedAt,
         fallback: args.fallback,
-        errorType: `provider_${response.status}`,
+        errorType,
       });
     }
 
