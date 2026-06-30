@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 const safetyNotes = [
   "AI Party Arcade is for lightweight party game demos and does not support real-money gambling, wagers, or financial rewards.",
   "The app is not designed around adult content. Keep shared prompts and story lines appropriate for your audience.",
-  "AI-style content and sample trivia can be wrong. Do not rely on the demo for education, legal, medical, financial, or safety-critical decisions.",
+  "AI-generated content and fallback trivia can be wrong. Do not rely on the demo for education, legal, medical, financial, or safety-critical decisions.",
   "Do not submit sensitive personal data or private information into room names, prompt responses, story lines, or leaderboard names.",
   "Because multiplayer is local/demo-only today, invite links are for review flow and route sharing rather than synchronized live gameplay.",
   "If a prompt or game format feels uncomfortable, stop the round and choose a different activity.",

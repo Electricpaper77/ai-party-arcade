@@ -14,7 +14,7 @@ const terms = [
   "AI Party Arcade is an MVP demo for browser-based party game concepts. Gameplay is local/demo-only until realtime multiplayer is added.",
   "Do not use the site for real-money gambling, wagers, betting, payments, or prize contests.",
   "The experience is not focused on adult content. Keep prompts, stories, names, and room activity suitable for general audiences.",
-  "AI-style prompts, trivia, and scoring placeholders may be inaccurate, incomplete, or purely illustrative.",
+  "AI-generated prompts, trivia, and scoring can be inaccurate, incomplete, or purely playful. Demo fallback content is labeled when used.",
   "Do not submit sensitive personal data, confidential information, passwords, financial details, or private messages.",
   "Use the demo responsibly and stop using it if it is not appropriate for your group or setting.",
 ];

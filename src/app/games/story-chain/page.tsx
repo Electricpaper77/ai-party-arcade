@@ -6,7 +6,7 @@ import { StoryChainDemo } from "@/components/StoryChainDemo";
 
 export const metadata: Metadata = {
   title: "AI Story Chain",
-  description: "Add story lines in a local AI-style party writing MVP demo.",
+  description: "Add story lines and continue them with server-side AI generation in a local MVP demo.",
   alternates: {
     canonical: "/games/story-chain",
   },
@@ -35,4 +35,3 @@ export default function StoryChainGamePage() {
     </SiteShell>
   );
 }
-

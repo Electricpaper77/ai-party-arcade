@@ -5,7 +5,7 @@ import { MvpBadge } from "@/components/MvpBadge";
 import { SiteShell } from "@/components/SiteShell";
 import { featuredGames, games } from "@/lib/games";
 
-const howItWorks = ["Create a room", "Share the link", "Play an AI-style challenge", "Compare scores"];
+const howItWorks = ["Create a room", "Share the link", "Play an AI-generated challenge", "Compare scores"];
 const builtFor = ["Friends", "Students", "Streamers", "Party game fans", "AI experimenters"];
 const demoPath = [
   "Create a room",
@@ -29,7 +29,7 @@ export default function Home() {
               AI Party Arcade
             </h1>
             <p className="mt-6 max-w-2xl text-xl font-bold leading-8 text-white/78">
-              Free browser party games with AI-style prompts, trivia, and story challenges. Create a room, share a link, and start a local demo round instantly.
+              Free browser party games with AI-generated prompts, trivia, and story challenges. Create a room, share a link, and start a local demo round instantly.
             </p>
             <p className="mt-4 max-w-2xl border-l-4 border-[#faff00] bg-[#faff00]/10 p-4 text-sm font-bold leading-6 text-[#fffca8]">
               MVP demo - local-only gameplay until realtime multiplayer is added.

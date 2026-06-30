@@ -1,39 +1,57 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { fallbackTriviaRound, type AiResponse, type TriviaRound } from "@/lib/aiSchemas";
 import { addLeaderboardEntry } from "@/lib/storage";
+import { AiMetricsPanel, emptyAiMetrics, mergeAiMetrics, type AiMetrics } from "./AiMetricsPanel";
 import { GameDemoFrame } from "./GameDemoFrame";
-
-const questions = [
-  {
-    question: "Which part of AI Party Arcade creates a shareable invite in this MVP?",
-    options: ["A local 6-character room code", "A user account", "A tournament server"],
-    answer: 0,
-  },
-  {
-    question: "What should simulated features be labeled as?",
-    options: ["Live beta", "MVP demo", "Ranked mode"],
-    answer: 1,
-  },
-  {
-    question: "Where does this demo leaderboard store scores?",
-    options: ["Browser localStorage", "A production database", "A social graph"],
-    answer: 0,
-  },
-];
 
 export function TriviaDuelDemo({ compact = false }: { compact?: boolean }) {
   const [player, setPlayer] = useState("Trivia Ace");
-  const [answers, setAnswers] = useState<Record<number, number>>({});
+  const [round, setRound] = useState<TriviaRound>(fallbackTriviaRound);
+  const [roundSource, setRoundSource] = useState<"AI-generated" | "demo fallback">("demo fallback");
+  const [selectedChoice, setSelectedChoice] = useState("");
   const [saved, setSaved] = useState(false);
+  const [answered, setAnswered] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [metrics, setMetrics] = useState<AiMetrics>(emptyAiMetrics);
 
-  const score = useMemo(
-    () => questions.reduce((total, question, index) => total + (answers[index] === question.answer ? 100 : 0), 0),
-    [answers],
-  );
+  const score = answered && selectedChoice === round.answer ? 100 : 0;
 
-  function chooseAnswer(questionIndex: number, optionIndex: number) {
-    setAnswers((current) => ({ ...current, [questionIndex]: optionIndex }));
+  async function generateTrivia() {
+    setLoading(true);
+    setError("");
+    setAnswered(false);
+    setSelectedChoice("");
+    setSaved(false);
+
+    try {
+      const response = await fetch("/api/generate-trivia", { method: "POST" });
+      const payload = (await response.json()) as AiResponse<TriviaRound>;
+      setRound(payload.data);
+      setRoundSource(payload.meta.source === "ai-generated" ? "AI-generated" : "demo fallback");
+      setMetrics((current) => mergeAiMetrics(current, payload.meta));
+      if (payload.meta.error_type) {
+        setError(`Using demo fallback: ${payload.meta.error_type}`);
+      }
+    } catch {
+      setRound(fallbackTriviaRound);
+      setRoundSource("demo fallback");
+      setMetrics((current) => ({
+        ...current,
+        fallbackCount: current.fallbackCount + 1,
+        errorCount: current.errorCount + 1,
+      }));
+      setError("AI trivia generation failed. Using demo fallback.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function chooseAnswer(choice: string) {
+    setSelectedChoice(choice);
+    setAnswered(true);
     setSaved(false);
   }
 
@@ -62,32 +80,46 @@ export function TriviaDuelDemo({ compact = false }: { compact?: boolean }) {
           <p className="text-3xl font-black">{score}</p>
         </div>
       </div>
-      <div className="grid gap-4">
-        {questions.map((question, questionIndex) => (
-          <article key={question.question} className="border border-white/14 bg-black/24 p-4">
-            <p className="font-black">{question.question}</p>
-            <div className="mt-4 grid gap-2 sm:grid-cols-3">
-              {question.options.map((option, optionIndex) => {
-                const selected = answers[questionIndex] === optionIndex;
-                return (
-                  <button
-                    key={option}
-                    type="button"
-                    onClick={() => chooseAnswer(questionIndex, optionIndex)}
-                    className={`min-h-16 border px-3 py-3 text-left text-sm font-bold transition ${
-                      selected
-                        ? "border-[#3cff87] bg-[#3cff87]/16 text-white"
-                        : "border-white/14 bg-white/[0.03] text-white/72 hover:border-white/40"
-                    }`}
-                  >
-                    {option}
-                  </button>
-                );
-              })}
-            </div>
-          </article>
-        ))}
-      </div>
+      <AiMetricsPanel metrics={metrics} />
+      {error ? <p className="border border-[#ff8a3d]/40 bg-[#ff8a3d]/10 p-3 text-sm font-bold text-[#ffd0ad]">{error}</p> : null}
+      <article className="border border-white/14 bg-black/24 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#9afcff]">{round.category}</p>
+          <span className="rounded border border-white/20 px-2 py-1 text-xs font-black uppercase tracking-[0.14em] text-white">
+            {roundSource}
+          </span>
+        </div>
+        <p className="mt-3 font-black">{round.question}</p>
+        <div className="mt-4 grid gap-2 sm:grid-cols-2">
+          {round.choices.map((choice) => {
+            const selected = selectedChoice === choice;
+            const correct = answered && choice === round.answer;
+            return (
+              <button
+                key={choice}
+                type="button"
+                onClick={() => chooseAnswer(choice)}
+                className={`min-h-16 border px-3 py-3 text-left text-sm font-bold transition ${
+                  selected || correct
+                    ? "border-[#3cff87] bg-[#3cff87]/16 text-white"
+                    : "border-white/14 bg-white/[0.03] text-white/72 hover:border-white/40"
+                }`}
+              >
+                {choice}
+              </button>
+            );
+          })}
+        </div>
+        {answered ? <p className="mt-4 text-sm leading-6 text-white/72">{round.explanation}</p> : null}
+      </article>
+      <button
+        type="button"
+        onClick={generateTrivia}
+        disabled={loading}
+        className="rounded border border-white/24 px-5 py-3 text-sm font-black text-white hover:bg-white/10 disabled:cursor-wait disabled:opacity-70"
+      >
+        {loading ? "Generating..." : "Generate AI trivia"}
+      </button>
       <button
         type="button"
         onClick={saveScore}
@@ -105,11 +137,10 @@ export function TriviaDuelDemo({ compact = false }: { compact?: boolean }) {
 
   return (
     <GameDemoFrame
-      title="AI Trivia Duel Demo"
-      description="Sample questions for a local browser duel. Answers and scores do not leave this device."
+      title="AI Trivia Duel"
+      description="Generate a server-side AI trivia round. Fallback questions are labeled when AI is unavailable."
     >
       {content}
     </GameDemoFrame>
   );
 }
-

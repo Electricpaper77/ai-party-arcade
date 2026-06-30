@@ -27,7 +27,7 @@ export const games: Game[] = [
     playerMode: "Local solo demo / party prompt format",
     tagline: "Write the sharpest prompt before the timer burns out.",
     description:
-      "Players respond to a shared prompt. This demo uses placeholder scoring and saves local scores only.",
+      "Generate a server-side AI prompt, answer it, and request AI judging. Scores are saved locally only.",
     accent: "from-[#ff3df2] to-[#fff84a]",
   },
   {
@@ -39,7 +39,7 @@ export const games: Game[] = [
     playerMode: "Local solo demo / duel format",
     tagline: "Fast answers, weird categories, instant rematches.",
     description:
-      "Answer sample AI-themed questions in a local browser round. No backend or live opponents are simulated.",
+      "Generate an AI trivia question in a local browser round. No live opponents are simulated.",
     accent: "from-[#47f7ff] to-[#3cff87]",
   },
   {
@@ -51,7 +51,7 @@ export const games: Game[] = [
     playerMode: "Local pass-and-play demo",
     tagline: "Build a chaotic story one line at a time.",
     description:
-      "Add lines to a shared local story and save a demo creativity score to this browser.",
+      "Add lines to a shared local story, continue it with AI, and save a local creativity score.",
     accent: "from-[#a96bff] to-[#ff8a3d]",
   },
   {

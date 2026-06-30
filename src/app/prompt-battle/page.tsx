@@ -9,7 +9,7 @@ export default function PromptBattlePage() {
       <PageHeader
         eyebrow="Prompt Battle"
         title="Win the room with the best prompt."
-        description="A single-browser MVP demo with a sample prompt and placeholder scoring. Save a local score, then compare it on the leaderboard."
+        description="A single-browser MVP demo with server-side AI prompt generation and judging. Save a local score, then compare it on the leaderboard."
       >
         <Link href="/create-room" className="rounded bg-[#faff00] px-5 py-3 text-sm font-black text-[#111114] shadow-[4px_4px_0_#ff3df2]">
           Create Prompt Battle room
@@ -21,4 +21,3 @@ export default function PromptBattlePage() {
     </SiteShell>
   );
 }
-

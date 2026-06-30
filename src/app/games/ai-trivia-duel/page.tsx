@@ -6,7 +6,7 @@ import { TriviaDuelDemo } from "@/components/TriviaDuelDemo";
 
 export const metadata: Metadata = {
   title: "AI Trivia Duel",
-  description: "Try sample AI-style trivia questions in a local browser MVP demo.",
+  description: "Try server-generated AI trivia questions in a local browser MVP demo.",
   alternates: {
     canonical: "/games/ai-trivia-duel",
   },
@@ -35,4 +35,3 @@ export default function AiTriviaDuelGamePage() {
     </SiteShell>
   );
 }
-

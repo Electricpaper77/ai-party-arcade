@@ -1,14 +1,16 @@
 # AI Party Arcade
 
-AI Party Arcade is a browser-based MVP for quick AI-style party games. The core loop is simple: create a room, invite friends, play a generated-style challenge, and compare scores.
+AI Party Arcade is a browser-based MVP for quick AI-generated party games. The core loop is simple: create a room, invite friends, play a generated challenge, and compare scores.
 
-This public MVP is intentionally local-only. It does not include real AI APIs, realtime multiplayer, Supabase, login, payments, ads, or global leaderboards yet.
+This public MVP uses server-side AI generation when `AI_API_KEY` is configured. It does not include realtime multiplayer, Supabase, login, payments, ads, or global leaderboards yet.
 
 ## Features
 
 - Modern arcade-style homepage with a 60-second reviewer demo path
 - Games page with Prompt Battle, AI Trivia Duel, AI Story Chain, Mystery Room, and Reaction Duel
-- Local MVP demos for Prompt Battle, AI Trivia Duel, and AI Story Chain
+- Server-side AI generation for Prompt Battle, AI Trivia Duel, and AI Story Chain
+- Labeled demo fallback content when AI generation is unavailable
+- API routes for prompt generation, trivia generation, response judging, and story continuation
 - Random six-character room codes
 - Copyable invite links
 - Local browser room state and localStorage leaderboard
@@ -23,6 +25,7 @@ This public MVP is intentionally local-only. It does not include real AI APIs, r
 - TypeScript
 - Tailwind CSS
 - Browser localStorage for demo-only persistence
+- Server-side AI route handlers using `AI_API_KEY`
 
 ## Local Setup
 
@@ -57,29 +60,48 @@ npm run build
    - Install Command: `npm install`
    - Build Command: `npm run build`
    - Output Directory: leave default
-5. Do not add environment variables for the current MVP.
-6. Deploy.
-7. After deploy, smoke-check `/`, `/games`, `/create-room`, `/leaderboard`, `/terms`, `/privacy`, and `/safety`.
+5. Add `AI_API_KEY` as a Vercel environment variable for Production, Preview, and Development.
+6. Optional: add `AI_MODEL` if you want a model other than the default.
+7. Deploy.
+8. After deploy, smoke-check `/`, `/games`, `/create-room`, `/leaderboard`, `/terms`, `/privacy`, and `/safety`.
 
 ## Environment Variables
 
-No environment variables are required for the MVP. See `.env.example` for the current placeholder.
+`AI_API_KEY` is required for real AI-generated rounds. Without it, the app still works by returning labeled demo fallback content from the server.
+
+Local setup:
+
+```bash
+cp .env.example .env.local
+```
+
+Then set:
+
+```bash
+AI_API_KEY=your_server_side_ai_api_key_here
+```
+
+Vercel setup:
+
+1. Open the Vercel project.
+2. Go to Settings -> Environment Variables.
+3. Add `AI_API_KEY`.
+4. Redeploy the latest commit.
 
 ## MVP Limitations
 
 - Gameplay is local/demo-only and not synchronized between devices.
 - Invite links share a room route, but do not create realtime multiplayer sessions.
 - Scores are stored only in the current browser.
-- AI behavior is represented with sample prompts, sample trivia, and placeholder scoring.
+- AI generation runs through server-side API routes only; browser code never receives `AI_API_KEY`.
+- Demo fallback content appears when AI generation is missing, rate-limited, unsafe, invalid, or unavailable.
 - Mystery Room and Reaction Duel are marked as coming soon.
 - No real-money gambling, payments, adult-content focus, or ad features are included.
 
 ## Next Roadmap
 
 - Realtime room synchronization
-- Real AI-generated prompts, trivia, and story continuations
 - Moderation and stronger safety controls
 - Optional accounts or host controls
 - Persistent leaderboards
 - Expanded game library
-

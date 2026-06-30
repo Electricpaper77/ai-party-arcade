@@ -6,7 +6,7 @@ import { SiteShell } from "@/components/SiteShell";
 
 export const metadata: Metadata = {
   title: "Prompt Battle",
-  description: "Play a local MVP demo of Prompt Battle, an AI-style party prompt game for quick browser rounds.",
+  description: "Play a local MVP demo of Prompt Battle with server-side AI prompt generation and judging.",
   alternates: {
     canonical: "/games/prompt-battle",
   },
@@ -18,7 +18,7 @@ export default function PromptBattleGamePage() {
       <PageHeader
         eyebrow="Prompt Battle"
         title="Win the room with the best prompt."
-        description="A single-browser MVP demo with a sample prompt and placeholder scoring. Save a local score, then compare it on the leaderboard."
+        description="A single-browser MVP demo with server-side AI prompt generation and judging. Save a local score, then compare it on the leaderboard."
       >
         <div className="flex flex-wrap gap-3">
           <Link href="/create-room" className="rounded bg-[#faff00] px-5 py-3 text-sm font-black text-[#111114] shadow-[4px_4px_0_#ff3df2]">
@@ -35,4 +35,3 @@ export default function PromptBattleGamePage() {
     </SiteShell>
   );
 }
-
