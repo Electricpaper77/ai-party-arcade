@@ -1,65 +1,81 @@
 import Image from "next/image";
+import Link from "next/link";
+import { GameCard } from "@/components/GameCard";
+import { MvpBadge } from "@/components/MvpBadge";
+import { SiteShell } from "@/components/SiteShell";
+import { featuredGames, games } from "@/lib/games";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+    <SiteShell>
+      <section className="relative">
+        <div className="mx-auto grid min-h-[calc(100vh-74px)] max-w-7xl items-center gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8">
+          <div className="relative z-10 max-w-3xl">
+            <div className="mb-6 flex flex-wrap items-center gap-3">
+              <MvpBadge />
+              <span className="text-sm font-black uppercase tracking-[0.18em] text-[#47f7ff]">No login required</span>
+            </div>
+            <h1 className="text-5xl font-black leading-[0.94] tracking-tight text-white sm:text-7xl lg:text-8xl">
+              AI Party Arcade
+            </h1>
+            <p className="mt-6 max-w-2xl text-xl font-bold leading-8 text-white/78">
+              Create a room, invite friends, let AI generate the game, and play instantly in the browser.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/create-room"
+                className="rounded bg-[#faff00] px-6 py-4 text-center text-sm font-black uppercase tracking-[0.14em] text-[#111114] shadow-[5px_5px_0_#ff3df2] transition hover:-translate-y-0.5"
+              >
+                Create room
+              </Link>
+              <Link
+                href="/games"
+                className="rounded border border-white/24 px-6 py-4 text-center text-sm font-black uppercase tracking-[0.14em] text-white hover:bg-white/10"
+              >
+                Browse games
+              </Link>
+            </div>
+            <div className="mt-10 grid max-w-2xl grid-cols-3 gap-3 text-center">
+              {["6-char codes", "Local demo state", "Instant rounds"].map((item) => (
+                <div key={item} className="border border-white/14 bg-white/[0.04] px-3 py-4">
+                  <p className="text-sm font-black text-white">{item}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="relative min-h-[360px] overflow-hidden border border-white/14 bg-[#11111b] shadow-[10px_10px_0_rgba(71,247,255,0.16)] sm:min-h-[520px]">
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+              src="/arcade-hero.png"
+              alt="Neon arcade party room with AI-generated mini-game screens"
+              fill
+              priority
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="object-cover"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <div className="absolute inset-0 bg-gradient-to-t from-[#07070c] via-transparent to-transparent" />
+            <div className="absolute bottom-4 left-4 right-4 border border-white/16 bg-black/55 p-4 backdrop-blur">
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-[#faff00]">Core loop</p>
+              <p className="mt-2 text-lg font-black">Room / Invite / Generate / Play</p>
+            </div>
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+      <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-sm font-black uppercase tracking-[0.18em] text-[#ff3df2]">Playable now</p>
+            <h2 className="mt-2 text-3xl font-black tracking-tight sm:text-5xl">MVP game demos</h2>
+          </div>
+          <Link href="/games" className="rounded border border-white/24 px-4 py-3 text-sm font-black text-white hover:bg-white/10">
+            View all {games.length}
+          </Link>
+        </div>
+        <div className="grid gap-5 md:grid-cols-3">
+          {featuredGames.map((game) => (
+            <GameCard key={game.slug} game={game} />
+          ))}
+        </div>
+      </section>
+    </SiteShell>
   );
 }
