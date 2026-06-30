@@ -25,7 +25,7 @@ export default function TermsPage() {
       <PageHeader
         eyebrow="Terms"
         title="Simple terms for a public MVP."
-        description="These terms are intentionally plain because the current product is a local browser demo without accounts, payments, ads, or real multiplayer."
+        description="These terms are intentionally plain because the current product is a local browser demo without accounts, payments, ads, or synchronized multiplayer."
       />
       <section className="mx-auto max-w-4xl px-4 pb-20 sm:px-6 lg:px-8">
         <div className="space-y-4 border border-white/14 bg-[#11111b]/92 p-5 sm:p-6">
@@ -39,4 +39,3 @@ export default function TermsPage() {
     </SiteShell>
   );
 }
-

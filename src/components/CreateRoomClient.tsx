@@ -72,7 +72,10 @@ export function CreateRoomClient() {
           <div>
             <span className="text-sm font-bold text-white/72">Room code</span>
             <div className="mt-2 flex flex-wrap items-center gap-3">
-              <code className="border border-[#faff00]/40 bg-[#faff00]/10 px-4 py-3 font-mono text-3xl font-black tracking-[0.16em] text-[#faff00]">
+              <code
+                suppressHydrationWarning
+                className="border border-[#faff00]/40 bg-[#faff00]/10 px-4 py-3 font-mono text-3xl font-black tracking-[0.16em] text-[#faff00]"
+              >
                 {code}
               </code>
               <button
@@ -84,7 +87,10 @@ export function CreateRoomClient() {
               </button>
             </div>
             <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <span className="select-all break-all border border-white/10 bg-black/32 px-3 py-3 text-sm font-bold text-white/62">
+              <span
+                suppressHydrationWarning
+                className="select-all break-all border border-white/10 bg-black/32 px-3 py-3 text-sm font-bold text-white/62"
+              >
                 Invite preview: {invitePath}
               </span>
               <button
