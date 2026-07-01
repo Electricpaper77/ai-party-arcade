@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { trackAnalyticsEvent } from "@/lib/analytics";
 import { copyTextToClipboard } from "@/lib/clipboard";
 import { games, type GameSlug } from "@/lib/games";
-import { readRoom, saveRoom, type DemoRoom } from "@/lib/storage";
+import { readRoom, readRoomsSnapshot, saveRoom, type DemoRoom } from "@/lib/storage";
 import { PromptBattleDemo } from "./PromptBattleDemo";
 import { StoryChainDemo } from "./StoryChainDemo";
 import { TriviaDuelDemo } from "./TriviaDuelDemo";
@@ -19,7 +19,7 @@ function fallbackRoom(code: string): DemoRoom {
     code,
     host: "Host",
     game: "prompt-battle",
-    createdAt: new Date().toISOString(),
+    createdAt: "local-demo",
   };
 }
 
@@ -27,42 +27,54 @@ function isValidRoomCode(code: string) {
   return /^[A-Z0-9]{6}$/.test(code);
 }
 
+function subscribeToRoomChanges(callback: () => void) {
+  if (typeof window === "undefined") {
+    return () => {};
+  }
+
+  window.addEventListener("storage", callback);
+  window.addEventListener("ai-party-arcade:rooms", callback);
+
+  return () => {
+    window.removeEventListener("storage", callback);
+    window.removeEventListener("ai-party-arcade:rooms", callback);
+  };
+}
+
 export function RoomClient({ code }: { code: string }) {
   const normalizedCode = code.toUpperCase();
   const validRoomCode = isValidRoomCode(normalizedCode);
-  const [room, setRoom] = useState<DemoRoom>(() => {
-    if (!validRoomCode || typeof window === "undefined") {
-      return fallbackRoom(normalizedCode);
+  const [copyState, setCopyState] = useState("Copy invite link");
+  const fallback = useMemo(() => fallbackRoom(normalizedCode), [normalizedCode]);
+  const roomsSnapshot = useSyncExternalStore(subscribeToRoomChanges, readRoomsSnapshot, () => "");
+  const storedRoom = useMemo(() => {
+    if (!validRoomCode) {
+      return undefined;
     }
 
-    return readRoom(normalizedCode) ?? fallbackRoom(normalizedCode);
-  });
-  const [copyState, setCopyState] = useState("Copy invite link");
+    try {
+      const rooms = roomsSnapshot ? (JSON.parse(roomsSnapshot) as Record<string, DemoRoom>) : {};
+      return rooms[normalizedCode];
+    } catch {
+      return readRoom(normalizedCode);
+    }
+  }, [normalizedCode, roomsSnapshot, validRoomCode]);
+  const room = storedRoom ?? fallback;
+  const invitePath = `/room/${normalizedCode}`;
 
   useEffect(() => {
-    if (validRoomCode && !readRoom(normalizedCode)) {
-      saveRoom(room);
+    if (validRoomCode && !storedRoom) {
+      saveRoom(fallback);
     }
-  }, [normalizedCode, room, validRoomCode]);
-
-  const inviteUrl = useMemo(() => {
-    if (typeof window === "undefined") {
-      return "";
-    }
-    return `${window.location.origin}/room/${normalizedCode}`;
-  }, [normalizedCode]);
+  }, [fallback, storedRoom, validRoomCode]);
 
   function updateGame(game: GameSlug) {
     const nextRoom = { ...room, game };
     saveRoom(nextRoom);
-    setRoom(nextRoom);
   }
 
   async function copyInvite() {
-    if (!inviteUrl) {
-      return;
-    }
-
+    const inviteUrl = `${window.location.origin}${invitePath}`;
     const copied = await copyTextToClipboard(inviteUrl);
     trackAnalyticsEvent("copy_invite_link", { copied, location: "room", game: selectedGame });
     if (copied) {
@@ -114,7 +126,7 @@ export function RoomClient({ code }: { code: string }) {
             {copyState}
           </button>
           <p className="mt-3 select-all break-all border border-white/10 bg-black/30 px-3 py-3 text-xs font-bold leading-5 text-white/58">
-            Invite link: {inviteUrl || `/room/${normalizedCode}`}
+            Invite link: {invitePath}
           </p>
           <div className="mt-6">
             <p className="mb-3 text-sm font-bold text-white/72">Room game</p>

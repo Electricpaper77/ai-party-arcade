@@ -1,8 +1,18 @@
 import Link from "next/link";
+import { getGameDataBySlug } from "@/lib/gameData";
 import type { Game } from "@/lib/games";
 import { MvpBadge } from "./MvpBadge";
 
+const aiModeLabels = {
+  "ai-generated": "AI-generated",
+  "ai-assisted": "AI-assisted",
+  "non-ai": "Non-AI",
+  "coming-soon": "Coming soon",
+};
+
 export function GameCard({ game }: { game: Game }) {
+  const gameData = getGameDataBySlug(game.slug);
+
   return (
     <article className="group flex h-full flex-col justify-between border border-white/14 bg-[#11111b]/86 p-5 shadow-[8px_8px_0_rgba(255,255,255,0.08)] transition hover:-translate-y-1 hover:border-white/28">
       <div>
@@ -16,7 +26,7 @@ export function GameCard({ game }: { game: Game }) {
         <dl className="mt-5 grid gap-3 text-sm sm:grid-cols-2">
           <div className="border border-white/10 bg-white/[0.03] p-3">
             <dt className="text-xs font-black uppercase tracking-[0.16em] text-[#3cff87]">AI status</dt>
-            <dd className="mt-1 font-bold text-white">{game.aiStatus}</dd>
+            <dd className="mt-1 font-bold text-white">{gameData ? aiModeLabels[gameData.aiMode] : game.aiStatus}</dd>
           </div>
           <div className="border border-white/10 bg-white/[0.03] p-3">
             <dt className="text-xs font-black uppercase tracking-[0.16em] text-[#47f7ff]">Difficulty</dt>
@@ -24,13 +34,23 @@ export function GameCard({ game }: { game: Game }) {
           </div>
           <div className="border border-white/10 bg-white/[0.03] p-3">
             <dt className="text-xs font-black uppercase tracking-[0.16em] text-[#ff8a3d]">Player mode</dt>
-            <dd className="mt-1 font-bold text-white">{game.playerMode}</dd>
+            <dd className="mt-1 font-bold text-white">{gameData?.playerMode ?? game.playerMode}</dd>
           </div>
           <div className="border border-white/10 bg-white/[0.03] p-3">
             <dt className="text-xs font-black uppercase tracking-[0.16em] text-[#faff00]">Best use</dt>
-            <dd className="mt-1 font-bold text-white">{game.bestUseCase}</dd>
+            <dd className="mt-1 font-bold text-white">{gameData?.targetAudience.slice(0, 3).join(", ") ?? game.bestUseCase}</dd>
           </div>
         </dl>
+        {gameData ? (
+          <div className="mt-4 space-y-3 text-sm leading-6 text-white/64">
+            <p>
+              <span className="font-black text-white">Replay:</span> {gameData.replayHook}
+            </p>
+            <p>
+              <span className="font-black text-white">Safety:</span> {gameData.safetyBoundary}
+            </p>
+          </div>
+        ) : null}
       </div>
       <Link
         href={game.href}

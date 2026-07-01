@@ -10,7 +10,10 @@ export type AnalyticsEventName =
   | "daily_challenge_started"
   | "daily_challenge_completed"
   | "share_score_clicked"
-  | "streak_updated";
+  | "streak_updated"
+  | "seo_page_view"
+  | "seo_game_cta_click"
+  | "related_game_click";
 
 export type AnalyticsEventPayload = Record<string, string | number | boolean | undefined>;
 

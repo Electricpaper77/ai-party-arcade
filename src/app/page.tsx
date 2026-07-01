@@ -3,6 +3,7 @@ import Link from "next/link";
 import { GameCard } from "@/components/GameCard";
 import { MvpBadge } from "@/components/MvpBadge";
 import { SiteShell } from "@/components/SiteShell";
+import { seoLandingPages } from "@/lib/gameData";
 import { featuredGames, games } from "@/lib/games";
 
 const howItWorks = ["Create a room", "Share the link", "Play an AI-generated challenge", "Compare scores"];
@@ -101,6 +102,26 @@ export default function Home() {
               <p className="text-sm font-black text-white">{badge}</p>
             </div>
           ))}
+        </div>
+        <div className="mb-16 border border-white/14 bg-[#10101a]/90 p-5 sm:p-6">
+          <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="text-sm font-black uppercase tracking-[0.18em] text-[#47f7ff]">Explore AI Game Modes</p>
+              <h2 className="mt-2 text-3xl font-black tracking-tight">SEO landing pages for the growing arcade.</h2>
+            </div>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {seoLandingPages.map((page) => (
+              <Link
+                key={page.slug}
+                href={page.href}
+                className="border border-white/14 bg-white/[0.03] p-4 transition hover:-translate-y-0.5 hover:bg-white/10"
+              >
+                <span className="text-sm font-black text-white">{page.title.replace(" | AI Party Arcade", "")}</span>
+                <span className="mt-2 block text-xs leading-5 text-white/58">{page.description}</span>
+              </Link>
+            ))}
+          </div>
         </div>
         <div className="mb-16 grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
           <div>

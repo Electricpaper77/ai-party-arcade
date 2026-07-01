@@ -101,10 +101,23 @@ export function saveRoom(room: DemoRoom) {
   const rooms = readRooms();
   rooms[room.code] = room;
   window.localStorage.setItem(roomsKey, JSON.stringify(rooms));
+  window.dispatchEvent(new Event("ai-party-arcade:rooms"));
 }
 
 export function readRoom(code: string) {
   return readRooms()[code.toUpperCase()];
+}
+
+export function readRoomsSnapshot() {
+  if (typeof window === "undefined") {
+    return "";
+  }
+
+  try {
+    return window.localStorage.getItem(roomsKey) ?? "";
+  } catch {
+    return "";
+  }
 }
 
 function daysBetween(previousDate: string, nextDate: string) {

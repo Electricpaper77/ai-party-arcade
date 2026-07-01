@@ -18,6 +18,17 @@ This public MVP uses server-side AI generation when `AI_API_KEY` is configured. 
 - Terms, Privacy, and Safety pages
 - App Router sitemap and robots files for Vercel deployment
 
+## Gaming Data Layer
+
+AI Party Arcade now includes a centralized gaming data layer in `src/lib/gameData.ts`.
+
+- Scalable game chunks describe live, demo, and coming-soon formats.
+- SEO landing pages reuse shared game data instead of hardcoding page content.
+- Game cards can align around honest AI mode, player mode, replay hooks, target audience, and safety boundaries.
+- Status labels stay explicit about what is live, demo-only, or planned.
+- Local browser state remains the persistence layer before realtime multiplayer.
+- Server-side AI routes use structured JSON outputs and fallback-safe generation.
+
 ## Tech Stack
 
 - Next.js App Router
@@ -63,7 +74,7 @@ npm run build
 5. Add `AI_API_KEY` as a Vercel environment variable for Production, Preview, and Development.
 6. Optional: add `AI_MODEL` if you want a model other than the default.
 7. Deploy.
-8. After deploy, smoke-check `/`, `/games`, `/create-room`, `/leaderboard`, `/terms`, `/privacy`, and `/safety`.
+8. After deploy, smoke-check `/`, `/games`, `/daily`, `/free-ai-games`, `/ai-party-games`, `/create-room`, `/leaderboard`, `/terms`, `/privacy`, and `/safety`.
 
 ## Environment Variables
 
